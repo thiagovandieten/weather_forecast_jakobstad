@@ -50,12 +50,12 @@ def send_emails(emails, schedule, forecast):
     try:
         # Get the emailer's user & pass
         # account_file = open('mailaccount.txt', 'r')
-        # (mail_user, password) = account_file.readline().split(',')
+        # (from_email, password) = account_file.readline().split(',')
         # account_file.close()
 
         #Changed to using input from the user itself
-        mail_user = input('Please login into the mail server with your email: ')
-        mail_user = mail_user.strip()
+        from_email = input('Please login into the mail server with your email: ')
+        from_email = from_email.strip()
         password = input('And your password: ').strip()
 
         # Connect to the SMTP server
@@ -63,11 +63,16 @@ def send_emails(emails, schedule, forecast):
 
         #Start TLS encryption
         server.starttls()
-        server.login(mail_user, password)
+        server.login(from_email, password)
         server.set_debuglevel(1)
 
         for address, name in emails.items():
-            server.sendmail(mail_user, address, forecast)
+            message = 'Subject: Welcome to the circus!\n'
+            message += 'Hi ' + name + '!\n\n'
+            message += forecast + '\n\n'
+            message += schedule + '\n\n'
+            message += 'Hope to see you there!'
+            server.sendmail(from_email, address, message)
 
         server.quit()
 
